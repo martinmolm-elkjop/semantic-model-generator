@@ -1,0 +1,298 @@
+name: Simple Sales Data
+tables:
+  - name: SALES_DATA
+    description: Sales data aggregated by period, department, item, and currency,
+      including sales quantity, revenue, and margin.
+    base_table:
+      database: CORTEX_ANALYST_SEMANTICS
+      schema: SEMANTIC_MODEL_GENERATOR
+      table: SALES_DATA
+    primary_key:
+      columns:
+        - 'PERIODID'
+        - 'DEPID'
+        - 'MASTERITEMID'
+        - 'CURRENCYID'
+        - 'ORDERNO'
+    dimensions:
+      - name: ORDERNO
+        synonyms:
+          - 'order_number'
+        description: Unique identifier for each order.
+        expr: ORDERNO
+        data_type: TEXT
+      - name: PERIODID
+        description: Period ID
+        expr: PERIODID
+        data_type: NUMBER
+      - name: DEPID
+        description: Department ID
+        expr: DEPID
+        data_type: FLOAT
+      - name: MASTERITEMID
+        description: Unique identifier for each master item.
+        expr: MASTERITEMID
+        data_type: NUMBER
+      - name: CURRENCYID
+        description: Currency ID
+        expr: CURRENCYID
+        data_type: NUMBER
+    time_dimensions:
+      - name: SALES_DATE
+        synonyms:
+          - 'order_date'
+        description: Date of the order.
+        expr: SALES_DATE
+        data_type: DATE
+        date_format: 'YYYY-MM-DD'
+    measures:
+      - name: QTY_SOLD
+        synonyms:
+          - 'quantity'
+        description: Quantity of items sold.
+        expr: QTY_SOLD
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: REVENUE_INC_COMM
+        synonyms:
+          - 'revenue'
+          - 'sales'
+        description: Revenue including commissions.
+        expr: REVENUE_INC_COMM
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: MARGIN
+        synonyms:
+          - 'profit'
+        description: Gross Margin Percentage
+        expr: MARGIN
+        data_type: NUMBER
+        default_aggregation: sum
+
+  - name: ARTICLES
+    description: A materialized view of articles, containing metadata such as master
+      item ID, code, name, model, group, category, model type, brand, supplier, and
+      various flags indicating accessory, gaming, and warranty status.
+    base_table:
+      database: CORTEX_ANALYST_SEMANTICS
+      schema: SEMANTIC_MODEL_GENERATOR
+      table: ARTICLES
+    primary_key:
+      columns:
+        - 'MASTERITEMID'
+    dimensions:
+      - name: ARTICLECODE
+        synonyms:
+          - 'SKU'
+        description: Unique article codes.
+        expr: ARTICLECODE
+        data_type: TEXT
+      - name: ARTICLENAME
+        synonyms:
+          - 'product'
+          - 'article'
+        description: The column "ARTICLENAME" contains a list of product names and
+          descriptions from various categories, including electronics, home appliances,
+          and accessories.
+        expr: ARTICLENAME
+        data_type: TEXT
+      - name: ARTICLE_MODEL
+        synonyms:
+          - 'model'
+        description: List of article models and descriptions.
+        expr: ARTICLE_MODEL
+        data_type: TEXT
+      - name: ARTICLE_GROUP
+        synonyms:
+          - 'group'
+        description: List of article groups, including various types of equipment,
+          accessories, and services.
+        expr: ARTICLE_GROUP
+        data_type: TEXT
+      - name: ARTICLE_CATEGORY
+        synonyms:
+          - 'category'
+        description: Category of the article, such as Telecom, MDA, Other, etc.
+        expr: ARTICLE_CATEGORY
+        data_type: TEXT
+        sample_values:
+          - 'Telecom'
+          - 'MDA'
+          - 'Other'
+          - 'Kitchen & Interior'
+          - 'Consumer Electronics'
+          - 'Local Products'
+          - 'SDA'
+          - 'Marketplace'
+          - 'Computing'
+          - 'Unknown'
+        is_enum: true
+      - name: ARTICLE_MODELTYPE
+        synonyms:
+          - 'modeltype'
+        description: 'Article Model Type: The type of article or product being sold
+          or offered, such as accessories, food, insurance, or entertainment.'
+        expr: ARTICLE_MODELTYPE
+        data_type: TEXT
+      - name: ARTICLE_BRAND
+        synonyms:
+          - 'brand'
+        description: List of brands mentioned in articles.
+        expr: ARTICLE_BRAND
+        data_type: TEXT
+      - name: ARTICLE_SUPPLIER
+        synonyms:
+          - 'supplier'
+        description: List of suppliers for articles.
+        expr: ARTICLE_SUPPLIER
+        data_type: TEXT
+      - name: IS_ACCESSORY
+        synonyms:
+          - 'Accessory'
+        description: Indicates whether the article is an accessory or not.
+        expr: IS_ACCESSORY
+        data_type: BOOLEAN
+        sample_values:
+          - 'True'
+          - 'False'
+      - name: IS_GAMING
+        synonyms:
+          - 'Gaming'
+        description: Indicates whether the article is related to gaming or not.
+        expr: IS_GAMING
+        data_type: BOOLEAN
+        sample_values:
+          - 'True'
+          - 'False'
+      - name: IS_WARRANTY
+        synonyms:
+          - ' warranty '
+        description: Indicates whether the article is covered by a warranty.
+        expr: IS_WARRANTY
+        data_type: BOOLEAN
+        sample_values:
+          - 'True'
+          - 'False'
+      - name: MASTERITEMID
+        description: Unique identifier for each article.
+        expr: MASTERITEMID
+        data_type: NUMBER
+        unique: true
+
+  - name: STORES
+    description: This materialized view, STORES, provides a snapshot of retail store
+      information, including store details, location, and operational characteristics,
+      for analysis and reporting purposes.
+    base_table:
+      database: CORTEX_ANALYST_SEMANTICS
+      schema: SEMANTIC_MODEL_GENERATOR
+      table: STORES
+    primary_key:
+      columns:
+        - 'DEPID'
+    dimensions:
+      - name: STORE_NAME
+        description: List of store names across various locations.
+        expr: STORE_NAME
+        data_type: TEXT
+      - name: STORE_CODE
+        description: Unique identifier for each store.__
+        expr: STORE_CODE
+        data_type: TEXT
+      - name: IS_FRANCHISE
+        synonyms:
+          - 'franchise'
+        description: Indicates whether the store is a franchise or not.
+        expr: IS_FRANCHISE
+        data_type: BOOLEAN
+        sample_values:
+          - 'False'
+          - 'True'
+      - name: MAIN_OPERATIONAL_CHAIN_NAME
+        synonyms:
+          - 'main_operational_chain'
+        description: Main operational chain name of the stores.
+        expr: MAIN_OPERATIONAL_CHAIN_NAME
+        data_type: TEXT
+      - name: COUNTRY_NAME
+        synonyms:
+          - 'country'
+        description: Country of origin for stores.
+        expr: COUNTRY_NAME
+        data_type: TEXT
+      - name: STORE_TYPE
+        description: Type of store or distribution center.
+        expr: STORE_TYPE
+        data_type: TEXT
+      - name: STORE_LEVEL
+        description: Level of store operation.
+        expr: STORE_LEVEL
+        data_type: TEXT
+      - name: STORE_REGION
+        description: Geographic region of a store.
+        expr: STORE_REGION
+        data_type: TEXT
+      - name: STORE_FORMAT
+        description: Format of a store.
+        expr: STORE_FORMAT
+        data_type: TEXT
+      - name: DEPID
+        description: Unique Store IDs
+        expr: DEPID
+        data_type: NUMBER
+        unique: true
+      - name: LATITUDE
+        description: Geographic location of stores.
+        expr: LATITUDE
+        data_type: NUMBER
+      - name: LONGITUDE
+        description: Geographic location of stores.
+        expr: LONGITUDE
+        data_type: NUMBER
+
+  - name: CURRENCY_RATE
+    description: 'Currency Rate View: This view provides the current exchange rate
+      for the Norwegian Krone (NOK) against other currencies, allowing for easy retrieval
+      and analysis of currency conversion rates.'
+    base_table:
+      database: CORTEX_ANALYST_SEMANTICS
+      schema: SEMANTIC_MODEL_GENERATOR
+      table: CURRENCY_RATE
+    primary_key:
+      columns:
+        - 'CURRENCYID'
+    dimensions:
+      - name: CURRENCYID
+        description: Unique identifier for each currency.
+        expr: CURRENCYID
+        data_type: NUMBER
+        unique: true
+      - name: EXCHANGE_RATE
+        description: Exchange Rate__
+        expr: EXCHANGE_RATE
+        data_type: NUMBER
+relationships:
+  - name: sales_article
+    left_table: SALES_DATA
+    right_table: ARTICLES
+    join_type: inner
+    relationship_type: many_to_one
+    relationship_columns:
+      - left_column: MASTERITEMID
+        right_column: MASTERITEMID
+  - name: sales_to_org
+    left_table: SALES_DATA
+    right_table: STORES
+    join_type: inner
+    relationship_type: many_to_one
+    relationship_columns:
+      - left_column: DEPID
+        right_column: DEPID
+  - name: sales_to_currency
+    left_table: SALES_DATA
+    right_table: CURRENCY_RATE
+    join_type: inner
+    relationship_type: many_to_one
+    relationship_columns:
+      - left_column: CURRENCYID
+        right_column: CURRENCYID

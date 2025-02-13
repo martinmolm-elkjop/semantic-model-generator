@@ -1,10 +1,10 @@
 SET (streamlit_warehouse)=(SELECT CURRENT_WAREHOUSE());
 
-CREATE DATABASE IF NOT EXISTS CORTEX_ANALYST_SEMANTICS
+{# CREATE DATABASE IF NOT EXISTS CORTEX_ANALYST_SEMANTICS
 COMMENT = '{"origin": "sf_sit",
             "name": "skimantics",
             "version": {"major": 2, "minor": 0},
-            "attributes": {"deployment": "sis"}}';
+            "attributes": {"deployment": "sis"}}'; #}
 
 CREATE SCHEMA IF NOT EXISTS CORTEX_ANALYST_SEMANTICS.SEMANTIC_MODEL_GENERATOR
 COMMENT = '{"origin": "sf_sit",
